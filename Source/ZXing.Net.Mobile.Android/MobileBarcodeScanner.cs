@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Android.Content;
+using Android.Content.PM;
 using ZXing;
 
 namespace ZXing.Mobile
@@ -23,9 +24,11 @@ namespace ZXing.Mobile
         }
 
 		public Android.Views.View CustomOverlay { get; set; }
-		//public int CaptureSound { get;set; }
-			
-		bool torch = false;
+        //public int CaptureSound { get;set; }
+
+        public ScreenOrientation Orientation { get; set; }
+
+        bool torch = false;
 
         public override void ScanContinuously (MobileBarcodeScanningOptions options, Action<Result> scanHandler)
         {                
@@ -39,6 +42,7 @@ namespace ZXing.Mobile
             ZxingActivity.ScanContinuously = true;
             ZxingActivity.TopText = TopText;
             ZxingActivity.BottomText = BottomText;
+            ZxingActivity.Orientation = Orientation;
 
             ZxingActivity.ScanCompletedHandler = (Result result) => 
             {
@@ -49,7 +53,7 @@ namespace ZXing.Mobile
             lifecycleListener.Context.StartActivity(scanIntent);
         }
 
-		public override Task<Result> Scan(MobileBarcodeScanningOptions options)
+        public override Task<Result> Scan(MobileBarcodeScanningOptions options)
 		{
 			var task = Task.Factory.StartNew(() => {
 			      
@@ -65,8 +69,9 @@ namespace ZXing.Mobile
                 ZxingActivity.ScanContinuously = false;
 				ZxingActivity.TopText = TopText;
 				ZxingActivity.BottomText = BottomText;
+                ZxingActivity.Orientation = Orientation;
 
-				Result scanResult = null;
+                Result scanResult = null;
 
 				ZxingActivity.CanceledHandler = () => 
 				{

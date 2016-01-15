@@ -78,8 +78,9 @@ namespace ZXing.Mobile
 		public static string TopText { get;set; }
 		public static string BottomText { get;set; }
         public static bool ScanContinuously { get;set; }
+	    public static ScreenOrientation Orientation { get; set; }
 
-		ZXingScannerFragment scannerFragment;
+	    ZXingScannerFragment scannerFragment;
 
 		protected override void OnCreate (Bundle bundle)
 		{
@@ -92,6 +93,8 @@ namespace ZXing.Mobile
 
 			if (ScanningOptions.AutoRotate.HasValue && !ScanningOptions.AutoRotate.Value)
 				RequestedOrientation = ScreenOrientation.Nosensor;
+
+		    RequestedOrientation = Orientation;
 
 			SetContentView(Resource.Layout.zxingscanneractivitylayout);
 
