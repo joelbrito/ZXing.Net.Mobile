@@ -11,6 +11,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using System.Drawing;
+using System.IO;
 using Android.Graphics;
 using Android.Content.PM;
 using Android.Hardware;
@@ -199,7 +200,7 @@ namespace ZXing.Mobile
 			var cameraParameters = camera.GetParameters();
 			var width = cameraParameters.PreviewSize.Width;
 			var height = cameraParameters.PreviewSize.Height;
-			//var img = new YuvImage(bytes, ImageFormatType.Nv21, cameraParameters.PreviewSize.Width, cameraParameters.PreviewSize.Height, null);	
+			var img = new YuvImage(bytes, ImageFormatType.Nv21, cameraParameters.PreviewSize.Width, cameraParameters.PreviewSize.Height, null);	
 			lastPreviewAnalysis = DateTime.UtcNow;
 
 			processingTask = Task.Factory.StartNew (() =>
@@ -257,7 +258,12 @@ namespace ZXing.Mobile
 						return;
 				
                     Android.Util.Log.Debug (MobileBarcodeScanner.TAG, "Barcode Found: " + result.Text);
-				
+
+                    var mStream = new MemoryStream();
+                    img.CompressToJpeg(new Rect(0, 0, width, height), 100, mStream);
+                    byte[] jpegBytes = mStream.ToArray();
+                    result.Image = jpegBytes;
+
                     wasScanned = true;
 					callback (result);
 				}
